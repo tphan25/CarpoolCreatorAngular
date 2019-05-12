@@ -1,0 +1,7 @@
+.next-button {
+    border: 0 none;
+    border-radius: 5px;
+    min-width: 130px;
+    margin: 0 5px;
+    display: inline-block;
+}
