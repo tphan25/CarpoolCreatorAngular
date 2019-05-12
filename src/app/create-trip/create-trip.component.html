@@ -6,89 +6,82 @@
       aria-valuemin="0" aria-valuemax="100" id="progressBar"></div>
   </div>
   <div class="container" name="form-container" style="max-height: 80%">
-    <form action="" class="form-horizontal">
+    <form action="" class="form-horizontal" [formGroup]="tripForm">
       <!-- TRIP FIELDS -->
-      <fieldset id="tripFields">
+      <fieldset id="tripFields" formGroupName="tripInfo">
         <div class="form-group my-2">
           <label for="tripName">What is the name of your trip?</label>
-          <input class="form-control form-control-md" id="tripName" type="text" placeholder="Insert trip name here...">
+          <input class="form-control form-control-md" formControlName="tripName" id="tripName" type="text"
+            placeholder="Insert trip name here...">
         </div>
         <div class="form-group mb-2">
           <label for="tripLocation">Where is your destination?</label>
-          <input class="form-control form-control-md" id="tripLocation" type="text"
+          <input class="form-control form-control-md" formControlName="tripLocation" id="tripLocation" type="text"
             placeholder="Insert destination here...">
         </div>
         <div class="form-group mb-2">
-          <label>Trip Date</label>
-          <input style="width: 40%" class="form-control" type="date" name="bday" max="3000-12-31" min="1000-01-01"
-            class="form-control">
+          <label for="tripDate">Trip Date</label>
+          <input style="width: 40%" class="form-control" formControlName="tripDate" type="date" name="bday"
+            max="3000-12-31" min="1000-01-01">
         </div>
         <div class="form-group mb-2">
           <label for="tripDescription">Trip Description:</label>
-          <textarea class="form-control" id="tripDescription" rows="3" placeholder="Leave a description..."></textarea>
+          <textarea class="form-control" formControlName="tripDescription" id="tripDescription" rows="3"
+            placeholder="Leave a description..."></textarea>
         </div>
       </fieldset>
       <!-- HOST FIELDS -->
-      <fieldset id="hostFields">
+      <fieldset id="hostFields" formGroupName="hostInfo">
         <div class="form-group my-2">
           <label for="hostName">Who is hosting the trip? (Can be someone other than yourself, but must be
             attending!)</label>
-          <input class="form-control form-control-md" id="hostName" type="text" placeholder="Insert host name here...">
+          <input class="form-control form-control-md" formControlName="hostName" id="hostName" type="text"
+            placeholder="Insert host name here...">
         </div>
         <div class="form-group my-2">
           <label for="hostAddress">What is the address of the host?</label>
-          <input class="form-control form-control-md" id="hostAddress" type="text"
+          <input class="form-control form-control-md" formControlName="hostAddress" id="hostAddress" type="text"
             placeholder="Insert host address here...">
         </div>
         <label for="canDrive">Can they drive?</label>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="canDrive" id="canDrive" checked>
-          <label class="form-check-label">
-            Yes
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="canDrive" id="canDrive">
-          <label class="form-check-label">
-            No
-          </label>
+        <div class="form-check ml-3">
+          <input class="form-check-input" type="radio" formControlName="hostCanDrive" name="hostCanDrive" id="canDrive"
+            value="true"> Yes
+          <br>
+          <input class="form-check-input" type="radio" formControlName="hostCanDrive" name="hostCanDrive" id="canDrive"
+            value="false"> No
         </div>
         <div class="form-group my-2">
           <label for="hostCapacity">If so, how many people can they take?</label>
-          <input class="form-control form-control-md" id="hostCapacity" type="number"
+          <input class="form-control form-control-md" formControlName="hostCapacity" id="hostCapacity" type="number"
             placeholder="Insert host capacity here...">
         </div>
       </fieldset>
       <!-- GUEST FIELDS -->
-      <fieldset id="guestFields">
+      <fieldset id="guestFields" [formGroup]="guestsInfo">
         <div class="row">
           <div class="container col-5">
             <div class="form-group my-2">
-              <label for="hostName">Enter the name of a guest: </label>
-              <input class="form-control form-control-md" id="guestName" type="text"
+              <label for="guestName">Enter the name of a guest: </label>
+              <input class="form-control form-control-md" formControlName="guestName" id="guestName" type="text"
                 placeholder="Insert guest name here...">
             </div>
             <div class="form-group my-2">
-              <label for="hostAddress">Enter the guest's address:</label>
-              <input class="form-control form-control-md" id="guestAddress" type="text"
+              <label for="guestAddress">Enter the guest's address:</label>
+              <input class="form-control form-control-md" formControlName="guestAddress" id="guestAddress" type="text"
                 placeholder="Insert guest address here...">
             </div>
             <label class="ml-3" for="canDrive">Can they drive?</label>
             <div class="form-check ml-3">
-              <input class="form-check-input" type="radio" name="canDrive" id="canDrive" checked>
-              <label class="form-check-label">
-                Yes
-              </label>
-            </div>
-            <div class="form-check ml-3">
-              <input class="form-check-input" type="radio" name="canDrive" id="canDrive">
-              <label class="form-check-label">
-                No
-              </label>
+              <input class="form-check-input" type="radio" formControlName="guestCanDrive" name="guestCanDrive"
+                id="canDrive" value="true"> Yes
+              <br>
+              <input class="form-check-input" type="radio" formControlName="guestCanDrive" name="guestCanDrive"
+                id="canDrive" value="false"> No
             </div>
             <div class="form-group my-2">
               <label for="guestCapacity">If so, how many people can they take?</label>
-              <input class="form-control form-control-md" id="guestCapacity" type="number"
+              <input class="form-control form-control-md" formControlName="guestCapacity" id="guestCapacity" type="number"
                 placeholder="Insert guest capacity here...">
             </div>
           </div>
@@ -96,37 +89,43 @@
             <h6>Guest List</h6>
             <div class="list-group">
               <!-- Use an ngFor with guests here, and have a variable for selected guest in list -->
-              <button type="button" class="list-group-item list-group-item-action active">
+              <button #guestItem *ngFor="let g of guests; let i = index" type="button" class="list-group-item list-group-item-action"
+                (click)="guestListClick(i)">{{ g.name }}</button>
+              <!-- <button type="button" class="list-group-item list-group-item-action active">
                 Cras justo odio
               </button>
               <button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
               <button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at
-                eros</button>
+                eros</button> -->
             </div>
           </div>
           <div class="container col-4">
             <h6>Guest Info</h6>
+            <!-- ngFor with guests again, but individual fields now -->
           </div>
         </div>
         <div class="row my-3">
-          <button class="btn btn-success ml-3" type="button">Add Guest</button>
+          <button class="btn btn-success ml-3" type="button" (click)="addGuest()" style="position: fixed;">Add Guest</button>
         </div>
       </fieldset>
       <!-- CONFIRMATION PAGE? -->
       <div class="container" id="confirmationPage">
         <div class="row">
           <div class="col text-center">
-              <h5>Please confirm the below details are correct for your trip:</h5>
+            <h5>Please confirm the below details are correct for your trip:</h5>
           </div>
         </div>
       </div>
     </form>
   </div>
-  <div class="container" style="height: 10%; position: fixed; bottom: 50px;">
+  <div class="container" style="height: 10%; position: fixed; bottom: 30px;">
     <div class="row my-5">
       <div class="col text-center">
-        <button type="button" class="btn btn-secondary next-button" id="prevButton" (click)="onClickedPrev()" disabled>Previous</button>
-        <button type="button" class="btn btn-primary next-button" id="nextButton" (click)="onClickedNext()">Next</button>
+        <button type="button" class="btn btn-secondary next-button" id="prevButton" (click)="onClickedPrev()"
+          disabled>Previous</button>
+        <button type="button" class="btn btn-primary next-button" id="nextButton"
+          (click)="onClickedNext()">Next</button>
+        <button type="button" (click)="printTripInfo()">Print Debug</button>
       </div>
     </div>
   </div>

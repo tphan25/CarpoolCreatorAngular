@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { Component, OnInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
+import { FormControl, FormGroup, FormArray, AbstractControl } from '@angular/forms';
+import { Person } from '../../models/Person';
 
 @Component({
   selector: 'app-create-trip',
@@ -7,7 +8,17 @@ import { FormControl, FormGroup } from '@angular/forms';
   styleUrls: ['./create-trip.component.css']
 })
 export class CreateTripComponent implements OnInit {
-  tripName = new FormControl('');
+  @ViewChildren('guestItem') private guestItems: QueryList<ElementRef>;
+  currGuestIndex: number;
+  guests: Person[];
+
+  guestsInfo = new FormGroup({
+    guestName: new FormControl(''),
+    guestAddress: new FormControl(''),
+    guestCanDrive: new FormControl(''),
+    guestCapacity: new FormControl('')
+  });
+
   tripForm = new FormGroup({
     // First section, tripFields
     tripInfo: new FormGroup({
@@ -24,6 +35,9 @@ export class CreateTripComponent implements OnInit {
       hostCapacity: new FormControl('')
     }),
     //How the heck do i do guests lmao
+    guestList: new FormArray([
+    ])
+
   });
 
   formPage: number;
@@ -33,6 +47,8 @@ export class CreateTripComponent implements OnInit {
 
   ngOnInit() {
     this.formPage = 0;
+    this.currGuestIndex = 0;
+    this.guests = [];
     this.formPageArray = [
       'tripFields',
       'hostFields',
@@ -70,4 +86,64 @@ export class CreateTripComponent implements OnInit {
     (document.getElementById('nextButton') as HTMLInputElement).disabled = false;
   }
 
+  guestListClick(i) {
+    this.guestItems.toArray()[this.currGuestIndex].nativeElement.active = false;
+    this.guestItems.toArray()[this.currGuestIndex].nativeElement.style = "background-color: white";
+    this.currGuestIndex = i;
+    this.guestItems.toArray()[this.currGuestIndex].nativeElement.active = true;
+    this.guestItems.toArray()[this.currGuestIndex].nativeElement.style = "background-color: #007BFF; color: white;";
+  }
+
+  addGuest() {
+    // Uses a deep clone of the function and pushes into array, as the current state of the formgroup was previously being used
+    const tempGuestInfo = this.cloneAbstractControl(this.guestsInfo);
+    (this.tripForm.get('guestList') as FormArray).push(tempGuestInfo);
+    this.guestsInfo.reset();
+    this.guests.push({
+      name: tempGuestInfo.get('guestName').value,
+      address: tempGuestInfo.get('guestAddress').value,
+      canDrive: tempGuestInfo.get('guestCanDrive').value,
+      capacity: tempGuestInfo.get('guestCapacity').value
+    });
+  }
+
+  printTripInfo() {
+    console.log(this.tripForm);
+  }
+
+  /**
+   * Deep clones the given AbstractControl, preserving values, validators, async validators, and disabled status.
+   * Thanks to: https://stackoverflow.com/questions/48308414/deep-copy-of-angular-reactive-form
+   * TODO: Copy other values of form, i.e. pristine, touched, etc
+   * @param control AbstractControl
+   * @returns AbstractControl
+   */
+  cloneAbstractControl<T extends AbstractControl>(control: T): T {
+    let newControl: T;
+
+    if (control instanceof FormGroup) {
+      const formGroup = new FormGroup({}, control.validator, control.asyncValidator);
+      const controls = control.controls;
+
+      Object.keys(controls).forEach(key => {
+        formGroup.addControl(key, this.cloneAbstractControl(controls[key]));
+      })
+
+      newControl = formGroup as any;
+    } else if (control instanceof FormArray) {
+      const formArray = new FormArray([], control.validator, control.asyncValidator);
+
+      control.controls.forEach(formControl => formArray.push(this.cloneAbstractControl(formControl)))
+
+      newControl = formArray as any;
+    } else if (control instanceof FormControl) {
+      newControl = new FormControl(control.value, control.validator, control.asyncValidator) as any;
+    } else {
+      throw new Error('Error: unexpected control value');
+    }
+
+    if (control.disabled) { newControl.disable({ emitEvent: false }); }
+
+    return newControl;
+  }
 }
