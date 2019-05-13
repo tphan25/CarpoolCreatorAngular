@@ -9,6 +9,8 @@ import { Person } from '../../models/Person';
 })
 export class CreateTripComponent implements OnInit {
   @ViewChildren('guestItem') private guestItems: QueryList<ElementRef>;
+  // janky fix but it works
+  @ViewChildren('guestItem2') private guestItems2: QueryList<ElementRef>;
   currGuestIndex: number;
   guests: Person[];
 
@@ -34,7 +36,7 @@ export class CreateTripComponent implements OnInit {
       hostCanDrive: new FormControl(''),
       hostCapacity: new FormControl('')
     }),
-    //How the heck do i do guests lmao
+    // How the heck do i do guests lmao
     guestList: new FormArray([
     ])
 
@@ -88,10 +90,14 @@ export class CreateTripComponent implements OnInit {
 
   guestListClick(i) {
     this.guestItems.toArray()[this.currGuestIndex].nativeElement.active = false;
-    this.guestItems.toArray()[this.currGuestIndex].nativeElement.style = "background-color: white";
+    this.guestItems.toArray()[this.currGuestIndex].nativeElement.style = 'background-color: white';
+    this.guestItems2.toArray()[this.currGuestIndex].nativeElement.active = false;
+    this.guestItems2.toArray()[this.currGuestIndex].nativeElement.style = 'background-color: white';
     this.currGuestIndex = i;
     this.guestItems.toArray()[this.currGuestIndex].nativeElement.active = true;
-    this.guestItems.toArray()[this.currGuestIndex].nativeElement.style = "background-color: #007BFF; color: white;";
+    this.guestItems.toArray()[this.currGuestIndex].nativeElement.style = 'background-color: #007BFF; color: white;';
+    this.guestItems2.toArray()[this.currGuestIndex].nativeElement.active = true;
+    this.guestItems2.toArray()[this.currGuestIndex].nativeElement.style = 'background-color: #007BFF; color: white;';
   }
 
   addGuest() {
@@ -105,10 +111,6 @@ export class CreateTripComponent implements OnInit {
       canDrive: tempGuestInfo.get('guestCanDrive').value,
       capacity: tempGuestInfo.get('guestCapacity').value
     });
-  }
-
-  printTripInfo() {
-    console.log(this.tripForm);
   }
 
   /**
@@ -127,13 +129,13 @@ export class CreateTripComponent implements OnInit {
 
       Object.keys(controls).forEach(key => {
         formGroup.addControl(key, this.cloneAbstractControl(controls[key]));
-      })
+      });
 
       newControl = formGroup as any;
     } else if (control instanceof FormArray) {
       const formArray = new FormArray([], control.validator, control.asyncValidator);
 
-      control.controls.forEach(formControl => formArray.push(this.cloneAbstractControl(formControl)))
+      control.controls.forEach(formControl => formArray.push(this.cloneAbstractControl(formControl)));
 
       newControl = formArray as any;
     } else if (control instanceof FormControl) {
@@ -146,4 +148,48 @@ export class CreateTripComponent implements OnInit {
 
     return newControl;
   }
+
+  /*----------------------------------------------ACCESSORS---------------------------------------------------------*/
+
+  printTripInfo() {
+    console.log(this.getTripDate());
+  }
+
+  private canDrive(b: boolean): string {
+    return b ? 'Yes' : 'No';
+  }
+  /*-----------------------------------------TRIP FIELDS-----------------------------------*/
+  getTripName(): string {
+    return this.tripForm.get('tripInfo').get('tripName').value;
+  }
+
+  private getTripLocation(): string {
+    return this.tripForm.get('tripInfo').get('tripLocation').value;
+  }
+
+  private getTripDate(): string {
+    return this.tripForm.get('tripInfo').get('tripDate').value;
+  }
+
+  private getTripDescription(): string {
+    return this.tripForm.get('tripInfo').get('tripDescription').value;
+  }
+  /*-----------------------------------------HOST FIELDS----------------------------------*/
+  private getHostName(): string {
+    return this.tripForm.get('hostInfo').get('hostName').value;
+  }
+
+  private getHostAddress(): string {
+    return this.tripForm.get('hostInfo').get('hostAddress').value;
+  }
+
+  private getHostCanDrive(): boolean {
+    return this.tripForm.get('hostInfo').get('hostCanDrive').value;
+  }
+
+  private getHostCapacity(): string {
+    return this.tripForm.get('hostInfo').get('hostCapacity').value;
+  }
+  /*-----------------------------------------GUEST FIELDS----------------------------------*/
+  // TODO
 }

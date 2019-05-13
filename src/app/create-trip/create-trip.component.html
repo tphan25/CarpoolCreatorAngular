@@ -1,11 +1,11 @@
-<div class="container col-10" style="min-height: 100%;">
+<div class="container col-10" style="min-height: 80%;">
   <h4 class="my-3">Fill out the form below to create and process your trip.</h4>
   <div class="progress my-4">
     <!-- How to alter width? -->
     <div class="progress-bar-striped bg-primary" style="width: 0%" role="progressbar" aria-valuenow="25"
       aria-valuemin="0" aria-valuemax="100" id="progressBar"></div>
   </div>
-  <div class="container" name="form-container" style="max-height: 80%">
+  <div class="container" name="form-container" style="max-height: 80%;">
     <form action="" class="form-horizontal" [formGroup]="tripForm">
       <!-- TRIP FIELDS -->
       <fieldset id="tripFields" formGroupName="tripInfo">
@@ -46,10 +46,10 @@
         <label for="canDrive">Can they drive?</label>
         <div class="form-check ml-3">
           <input class="form-check-input" type="radio" formControlName="hostCanDrive" name="hostCanDrive" id="canDrive"
-            value="true"> Yes
+            [value]="true"> Yes
           <br>
           <input class="form-check-input" type="radio" formControlName="hostCanDrive" name="hostCanDrive" id="canDrive"
-            value="false"> No
+            [value]="false"> No
         </div>
         <div class="form-group my-2">
           <label for="hostCapacity">If so, how many people can they take?</label>
@@ -74,52 +74,168 @@
             <label class="ml-3" for="canDrive">Can they drive?</label>
             <div class="form-check ml-3">
               <input class="form-check-input" type="radio" formControlName="guestCanDrive" name="guestCanDrive"
-                id="canDrive" value="true"> Yes
+                id="canDrive" [value]="true"> Yes
               <br>
               <input class="form-check-input" type="radio" formControlName="guestCanDrive" name="guestCanDrive"
-                id="canDrive" value="false"> No
+                id="canDrive" [value]="false"> No
             </div>
             <div class="form-group my-2">
               <label for="guestCapacity">If so, how many people can they take?</label>
-              <input class="form-control form-control-md" formControlName="guestCapacity" id="guestCapacity" type="number"
-                placeholder="Insert guest capacity here...">
+              <input class="form-control form-control-md" formControlName="guestCapacity" id="guestCapacity"
+                type="number" placeholder="Insert guest capacity here...">
             </div>
           </div>
+          <!-- DISPLAYING GUESTS -->
           <div class="container col-3">
-            <h6>Guest List</h6>
+            <h5>Guest List</h5>
             <div class="list-group">
-              <!-- Use an ngFor with guests here, and have a variable for selected guest in list -->
-              <button #guestItem *ngFor="let g of guests; let i = index" type="button" class="list-group-item list-group-item-action"
-                (click)="guestListClick(i)">{{ g.name }}</button>
-              <!-- <button type="button" class="list-group-item list-group-item-action active">
-                Cras justo odio
-              </button>
-              <button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
-              <button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at
-                eros</button> -->
+              <button #guestItem *ngFor="let g of guests; let i = index" type="button"
+                class="list-group-item list-group-item-action" (click)="guestListClick(i)">{{ g.name }}</button>
             </div>
           </div>
           <div class="container col-4">
-            <h6>Guest Info</h6>
-            <!-- ngFor with guests again, but individual fields now -->
+            <h5>Guest Info</h5>
+            <div class="card" style="width: 18rem;" *ngIf="this.guests.length > 0">
+              <div class="card-body">
+                <div class="container">
+                  <div class="row">
+                    <h6 class="card-title my-3 col-6" style="text-align: right">Guest Name: </h6>
+                    <p class="card-title my-3 col-6" style="text-align: left">{{ this.guests[currGuestIndex].name }}</p>
+                  </div>
+                  <div class="row">
+                    <h6 class="card-subtitle my-2 col-6" style="text-align: right">Guest Address: </h6>
+                    <p class="card-subtitle my-2 col-6" style="text-align: left">
+                      {{ this.guests[currGuestIndex].address }}</p>
+                  </div>
+                  <div class="row">
+                    <h6 class="card-subtitle my-2 col-6" style="text-align: right">Can they drive: </h6>
+                    <p class="card-subtitle my-2 col-6" style="text-align: left">
+                      {{ canDrive(this.guests[currGuestIndex].canDrive) }}</p>
+                  </div>
+                  <div class="row">
+                    <h6 class="card-subtitle my-2 col-6" style="text-align: right"
+                      *ngIf="this.guests[currGuestIndex].canDrive">
+                      Car Capacity: </h6>
+                    <p class="card-subtitle my-2 col-6" style="text-align: left"
+                      *ngIf="this.guests[currGuestIndex].canDrive">
+                      {{ this.guests[currGuestIndex].capacity }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="row my-3">
-          <button class="btn btn-success ml-3" type="button" (click)="addGuest()" style="position: fixed;">Add Guest</button>
+        <div class="row my-2">
+          <div class="col-sm-4 col-md-4 col-lg-3">
+              <button class="btn btn-success btn-block ml-3" type="button" (click)="addGuest()">Add
+                  Guest</button>
+          </div>
         </div>
       </fieldset>
       <!-- CONFIRMATION PAGE? -->
       <div class="container" id="confirmationPage">
         <div class="row">
           <div class="col text-center">
-            <h5>Please confirm the below details are correct for your trip:</h5>
+            <h6>Please confirm the below details are correct for your trip:</h6>
+            <hr>
+          </div>
+        </div>
+        <!-- TODO: TRIP PART: Name, Location, Date, Description -->
+        <div class="row">
+          <div class="col-4">
+            <h6>Trip Info</h6>
+            <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                <h5 class="card-title">Trip Name: </h5>
+                <h6>{{ this.getTripName() }}</h6>
+                <hr>
+                <h6 class="card-subtitle mb-2">Trip Location: </h6>
+                <p>{{ this.getTripLocation() }}</p>
+                <br>
+                <h6 class="card-subtitle mb-2">Trip Date: </h6>
+                <p>{{ this.getTripDate() }}</p>
+                <hr>
+                <h6 class="card-subtitle mb-2">Trip Description: </h6>
+                <p>{{ this.getTripDescription() }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <h6>Host Info</h6>
+            <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                <h5 class="card-title">Host Name: </h5>
+                <h6>{{ this.getHostName() }}</h6>
+                <hr>
+                <h6 class="card-subtitle mb-2">Host Address: </h6>
+                <p>{{ this.getHostAddress() }}</p>
+                <br>
+                <h6 class="card-subtitle mb-2">Can they drive: </h6>
+                <p>{{ canDrive(this.getHostCanDrive()) }}</p>
+                <hr>
+                <h6 class="card-subtitle mb-2" *ngIf="this.getHostCanDrive()">Car Capacity: {{ this.getHostCapacity() }}
+                </h6>
+                <p>{{ this.getTripDescription() }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <h6>Guests Info</h6>
+            <div class="row">
+              <div class="col text-center">
+                <div class="card" style="width: 18rem;" *ngIf="this.guests.length > 0">
+                  <div class="card-body">
+                    <div class="container">
+                      <div class="row">
+                        <h6 class="card-title my-3 col-6" style="text-align: right">Guest Name: </h6>
+                        <p class="card-title my-3 col-6" style="text-align: left">{{ this.guests[currGuestIndex].name }}
+                        </p>
+                      </div>
+                      <div class="row">
+                        <h6 class="card-subtitle my-2 col-6" style="text-align: right">Guest Address: </h6>
+                        <p class="card-subtitle my-2 col-6" style="text-align: left">
+                          {{ this.guests[currGuestIndex].address }}</p>
+                      </div>
+                      <div class="row">
+                        <h6 class="card-subtitle my-2 col-6" style="text-align: right">Can they drive: </h6>
+                        <p class="card-subtitle my-2 col-6" style="text-align: left">
+                          {{ canDrive(this.guests[currGuestIndex].canDrive) }}</p>
+                      </div>
+                      <div class="row">
+                        <h6 class="card-subtitle my-2 col-6" style="text-align: right"
+                          *ngIf="this.guests[currGuestIndex].canDrive">
+                          Car Capacity: </h6>
+                        <p class="card-subtitle my-2 col-6" style="text-align: left"
+                          *ngIf="this.guests[currGuestIndex].canDrive">
+                          {{ this.guests[currGuestIndex].capacity }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row overflow-auto" style="height: 40%;">
+              <div class="col">
+                <h6>Guest List</h6>
+                <div class="list-group">
+                  <button #guestItem2 *ngFor="let g of guests; let i = index" type="button"
+                    class="list-group-item list-group-item-action" (click)="guestListClick(i)">{{ g.name }}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- SUBMIT -->
+        <div class="row">
+          <div class="col text-center">
+            <button class="btn btn-primary">SUBMIT!</button>
           </div>
         </div>
       </div>
     </form>
   </div>
-  <div class="container" style="height: 10%; position: fixed; bottom: 30px;">
-    <div class="row my-5">
+  <div class="container">
+    <div class="row mb-5">
       <div class="col text-center">
         <button type="button" class="btn btn-secondary next-button" id="prevButton" (click)="onClickedPrev()"
           disabled>Previous</button>
