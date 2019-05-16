@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { FormControl, FormGroup, FormArray, AbstractControl } from '@angular/forms';
 import { Person } from '../../models/Person';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-create-trip',
@@ -45,7 +46,7 @@ export class CreateTripComponent implements OnInit {
   formPage: number;
   formPageArray: string[];
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   ngOnInit() {
     this.formPage = 0;
@@ -86,6 +87,13 @@ export class CreateTripComponent implements OnInit {
       (document.getElementById('prevButton') as HTMLInputElement).disabled = true;
     }
     (document.getElementById('nextButton') as HTMLInputElement).disabled = false;
+  }
+
+  onSubmit() {
+    const jsonForm = JSON.stringify(this.formatForServer());
+    // MAKE HTTP REQUEST
+    this.http.post('http://localhost:8080', jsonForm)
+      .subscribe((data) => { console.log(data); });
   }
 
   guestListClick(i) {
@@ -152,7 +160,29 @@ export class CreateTripComponent implements OnInit {
   /*----------------------------------------------ACCESSORS---------------------------------------------------------*/
 
   printTripInfo() {
-    console.log(this.getTripDate());
+    const temp2 = this.http.get('http://localhost:8080',
+      { responseType: 'text'})
+      .subscribe((data) => { console.log(data); });
+    console.log(JSON.stringify(this.tripForm.value));
+    console.log(JSON.stringify(this.formatForServer()));
+  }
+
+  formatForServer() {
+    const obj = {
+      host: {
+        name: this.getHostName(),
+        address: this.getHostAddress(),
+        canDrive: this.getHostCanDrive(),
+        capacity: this.getHostCapacity()
+      },
+      guestList: this.guests,
+      tripName: this.getTripName(),
+      tripLocation: this.getTripLocation(),
+      tripDate: this.getTripDate(),
+      description: this.getTripDescription()
+    };
+
+    return obj;
   }
 
   private canDrive(b: boolean): string {
@@ -188,7 +218,7 @@ export class CreateTripComponent implements OnInit {
   }
 
   private getHostCapacity(): string {
-    return this.tripForm.get('hostInfo').get('hostCapacity').value;
+    return this.tripForm.get('hostInfo').get('hostCapacity').value.length > 0 ? this.tripForm.get('hostInfo').get('hostCapacity').value : 0;
   }
   /*-----------------------------------------GUEST FIELDS----------------------------------*/
   // TODO
