@@ -92,8 +92,8 @@ export class CreateTripComponent implements OnInit {
   onSubmit() {
     const jsonForm = JSON.stringify(this.formatForServer());
     // MAKE HTTP REQUEST
-    this.http.post('http://localhost:8080', jsonForm)
-      .subscribe((data) => { console.log(data); });
+    console.log(this.http.post('http://localhost:8080/trips', jsonForm)
+      .subscribe((data) => { console.log(data); }));
   }
 
   guestListClick(i) {
@@ -218,7 +218,7 @@ export class CreateTripComponent implements OnInit {
   }
 
   private getHostCapacity(): string {
-    return this.tripForm.get('hostInfo').get('hostCapacity').value.length > 0 ? this.tripForm.get('hostInfo').get('hostCapacity').value : 0;
+    return this.tripForm.get('hostInfo').get('hostCapacity').value != null ? this.tripForm.get('hostInfo').get('hostCapacity').value : 0;
   }
   /*-----------------------------------------GUEST FIELDS----------------------------------*/
   // TODO
